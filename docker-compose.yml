@@ -9,7 +9,7 @@ services:
     volumes:
       - ./sql/mysql:/var/lib/mysql
       - ./sql/mysql-dump:/var/backups
-      - ./sql/initdb:/docker-entrypoint-initdb.d
+      - ./sql/initdb/create-table.sql:/docker-entrypoint-initdb.d/create-table.sql
     ports:
       - 127.0.0.1:3311:3306
     security_opt:

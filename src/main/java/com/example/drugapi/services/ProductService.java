@@ -31,7 +31,7 @@ public class ProductService {
     public ResponseEntity<?> getProducts(String slug,Pageable pageable) throws Exception{
         if(slug != null) {
             ProductDto productDto = new ProductDto();
-            Products products = productRepository.findBySlug(slug);
+            Products products = productRepository.findFirstBySlug(slug);
             if(products == null) {
                 throw new BadRequestException(Message.NOT_FOUND);
             }

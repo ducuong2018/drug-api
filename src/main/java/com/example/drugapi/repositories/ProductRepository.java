@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends JpaRepository<Products,Integer> {
     Page<Products> findAll(Pageable pageable);
-    Products findBySlug(String slug);
+    Products findFirstBySlug(String slug);
 }
