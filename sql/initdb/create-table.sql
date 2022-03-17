@@ -46,3 +46,12 @@ CREATE TABLE `product_category` (
                                     CONSTRAINT `fk_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
                                     CONSTRAINT `fk_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+CREATE TABLE `drug`.`users` (
+                                `id` INT AUTO_INCREMENT,
+                                `email` VARCHAR(45) NOT NULL,
+                                `password` VARCHAR(100) NOT NULL,
+                                `name` VARCHAR(100) NULL,
+                                `create_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                PRIMARY KEY (`id`),
+                                UNIQUE INDEX `email_UNIQUE` (`email` ASC));
