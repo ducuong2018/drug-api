@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -32,11 +33,10 @@ public class UserService implements UserDetailsService {
     JwtTokenProvider jwtTokenProvider;
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     public ResponseEntity<?> addUser(RegisterDto registerDto) throws IOException {
-//        log.info(registerDto);
         if(Objects.nonNull(userRepository.findUserByEmail(registerDto.getEmail()))){
                 throw new BadRequestException(Message.EMAIL);
         }
-
+        log.info(registerDto);
         registerDto.setPassword(bCryptPasswordEncoder.encode(registerDto.getPassword()));
         Users users = new Users();
         users.setEmail(registerDto.getEmail());
@@ -84,5 +84,29 @@ public class UserService implements UserDetailsService {
             throw new BadRequestException(Message.NOT_FOUND);
         }
         return new CustomUserDetails(user);
+    }
+    public ResponseEntity<?> getUser(String token) throws IOException {
+        Users user = new Users();
+        String uri =
+        "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=eyJhbG" +
+                "ciOiJSUzI1NiIsImtpZCI6IjcyOTE4OTQ1MGQ0OTAyODU3MDQy" +
+                "NTI2NmYwM2U3MzdmNDVhZjI5MzIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW5" +
+                "0cy5nb29nbGUuY29tIiwiYXpwIjoiNjYxNTQxMDQzMDY0LTFwcnIxYnJtazdycG84ZGl2YzFl" +
+                "bjYza2wwN2Q5YWxlLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNjYxNTQxMDQzMDY" +
+                "0LTFwcnIxYnJtazdycG84ZGl2YzFlbjYza2wwN2Q5YWxlLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3V" +
+                "iIjoiMTEzNTgzNTM2OTE3ODgyMzc5MDk3IiwiaGQiOiJhem9vbS5qcCIsImVtYWlsIjoiZHUuY29uZy5jdW9uZ0Bhem9v" +
+                "bS5qcCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoidVlRR3RBMHJMSm5RTEZPazNhZ2NhUSIsIm5hbWU" +
+                "iOiJDdW9uZyBEdSBDb25nIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hLS9BT2gx" +
+                "NEdpMWZFLUo4bzduVjM5ZkVNckF0b0dvWW9CLXZaZFJBVXdLSzRtMz1zOTYtYyIsImdpdmVuX25hbWUiOiJDdW9uZyIs" +
+                "ImZhbWlseV9uYW1lIjoiRHUgQ29uZyIsImxvY2FsZSI6ImVuIiwiaWF0IjoxNjQ3NTkwMzQzLCJleHAiOjE2NDc1OTM5NDMs" +
+                "Imp0aSI6ImU3MmVlNWUwOTkzZGJlMDMwMDRlZGExZTY0YTBjOWRkZmU0NTQ5NzAifQ.H72FDyl6D5MThbqsWJTNTOuR038EAYK" +
+                "knSYXDJbpbywNTFTpHTL8PiRPefwRKFrH6mqvuF17IrsJnxbfVxifdleunAQjVxoh1Qk3tb1zlUv7SMtYovagsLHY7M8TIBrX" +
+                "oY-NqY1UkyjDaEXJcnuvCq_FdZkKWzWRoA0wNQSWqQG7eMW3SbLPXWh4-PXpclp7-XxcOTV4zUd8-9Xysm3PKWdLwP0M2-e4mV" +
+                "Xqlu8FyIMJCLMiP8RO8UwHktXsO-Lgt7GdSyt_3TeGbXNg3Cy_leXm16I_" +
+                "DOWXZe2b51nUYgUOUdRq8tS80axcPabZMwMIlVNLBo4h1hSV-aNms3wF7w";
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(uri, String.class);
+        log.info(result);
+        return ResponseEntity.ok(user);
     }
 }

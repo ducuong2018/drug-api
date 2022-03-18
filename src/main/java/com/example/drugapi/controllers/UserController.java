@@ -12,10 +12,15 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/v1")
 public class UserController {
     @Autowired
     UserService userService;
+    @GetMapping("/user")
+    public ResponseEntity<?> getDetailUser (@RequestHeader("x-token") String jwt) throws IOException {
+        return userService.getUser(jwt);
+    }
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto) throws IOException {
         return userService.addUser(registerDto);
