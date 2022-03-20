@@ -18,42 +18,7 @@ public class CategoryService {
     CategoryRepository categoryRepository;
     public List<CategoryDto> getCategories(String slug) throws IOException {
         List<CategoryDto> categoryDtos = new ArrayList<>();
-        List<Categories> categoriesLv3;
-        List<Categories> categoriesLv2;
-        List<Categories> categoriesLv1;
         List<Categories> categories;
-        if(slug != null) {
-            categoriesLv3 = categoryRepository.findCategoriesBySlug(slug);
-            int parentId = 0;
-            if(categoriesLv3!= null) {
-                for(Categories category : categoriesLv3) {
-                    CategoryDto categoryDto = new CategoryDto();
-                    categoryDto.setId(category.getId());
-                    categoryDtos.add((categoryDto));
-                    parentId = category.getParentId();
-                }
-            }
-
-            categoriesLv2 = categoryRepository.findCategoriesById(parentId);
-            if(categoriesLv2 != null) {
-                for(Categories category : categoriesLv2) {
-                    CategoryDto categoryDto = new CategoryDto();
-                    categoryDto.setId(category.getId());
-                    categoryDtos.add((categoryDto));
-                    parentId = category.getParentId();
-                }
-            }
-            categoriesLv1 = categoryRepository.findCategoriesById(parentId);
-            if(categoriesLv1 != null) {
-                for(Categories category : categoriesLv1) {
-                    CategoryDto categoryDto = new CategoryDto();
-                    categoryDto.setId(category.getId());
-                    categoryDtos.add((categoryDto));
-                }
-            }
-
-           return categoryDtos;
-        }
         categories  = categoryRepository.findAll();
         for(Categories category : categories){
             CategoryDto categoryDto = new CategoryDto();

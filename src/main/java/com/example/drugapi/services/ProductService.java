@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,5 +91,32 @@ public class ProductService {
         });
         return ResponseEntity.ok(productDtos);
         }
+        public  ResponseEntity<?> getProductInCategory(String slug) throws IOException {
+            List<ProductDto> productDtos = new ArrayList<>();
+            Categories categories = categoryRepository.findCategoriesBySlug(slug);
+            List<Products> products = productRepository.findProductsByIdCategory(categories.getId());
+            products.stream().forEach(value -> {
+                List<ImageDto> imageDtos = new ArrayList<>();
+                ProductDto productDto = new ProductDto();
+                List<Images> images = imageRepository.findAllByProductId(value.getId());
+                images.stream().forEach(item -> {
+                    ImageDto imageDto = new ImageDto();
+                    imageDto.setId(item.getId());
+                    imageDto.setUrl(item.getUrl());
+                    imageDtos.add(imageDto);
+                });
+                productDto.setId(value.getId());
+                productDto.setName(value.getName());
+                productDto.setPrice(value.getPrice());
+                productDto.setSalePrice(value.getSalePrice());
+                productDto.setDescription(value.getDescription());
+                productDto.setLongDescription(value.getLongDescription());
+                productDto.setSlug(value.getSlug());
+                productDto.setImages(imageDtos);
+                productDtos.add(productDto);
+            });
+            return ResponseEntity.ok(productDtos);
+        }
+
 }
 
