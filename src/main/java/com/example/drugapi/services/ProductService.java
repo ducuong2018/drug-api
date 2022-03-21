@@ -11,6 +11,7 @@ import com.example.drugapi.models.Products;
 import com.example.drugapi.repositories.CategoryRepository;
 import com.example.drugapi.repositories.ImageRepository;
 import com.example.drugapi.repositories.ProductRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +21,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
+@Log4j2
 public class ProductService {
     @Autowired
     ImageRepository imageRepository;
@@ -29,7 +32,38 @@ public class ProductService {
     ProductRepository productRepository;
     @Autowired
     CategoryRepository categoryRepository;
-    public ResponseEntity<?> getProducts(String slug,Pageable pageable) throws Exception{
+    public ResponseEntity<?> getProducts(String slug,String slugCategory,Pageable pageable) throws Exception{
+        if(slugCategory != null) {
+            List<ProductDto> productDtos = new ArrayList<>();
+            Categories categories = categoryRepository.findFirstBySlug(slugCategory);
+            if(Objects.isNull(categories)) {
+                throw new BadRequestException(Message.NOT_FOUND);
+            }
+            Page<Products> products = productRepository.findProductsByIdCategory(categories.getId(),pageable);
+            log.info(products);
+            products.stream().forEach(value -> {
+                List<ImageDto> imageDtos = new ArrayList<>();
+                ProductDto productDto = new ProductDto();
+                List<Images> images = imageRepository.findAllByProductId(value.getId());
+                images.stream().forEach(item -> {
+                    ImageDto imageDto = new ImageDto();
+                    imageDto.setId(item.getId());
+                    imageDto.setUrl(item.getUrl());
+                    imageDtos.add(imageDto);
+                });
+                productDto.setId(value.getId());
+                productDto.setName(value.getName());
+                productDto.setPrice(value.getPrice());
+                productDto.setSalePrice(value.getSalePrice());
+                productDto.setDescription(value.getDescription());
+                productDto.setLongDescription(value.getLongDescription());
+                productDto.setSlug(value.getSlug());
+                productDto.setImages(imageDtos);
+//                productDto.setCategory((List<CategoryDto>) categories);
+                productDtos.add(productDto);
+            });
+            return ResponseEntity.ok(productDtos);
+        }
         if(slug != null) {
             ProductDto productDto = new ProductDto();
             Products products = productRepository.findFirstBySlug(slug);
@@ -91,32 +125,5 @@ public class ProductService {
         });
         return ResponseEntity.ok(productDtos);
         }
-        public  ResponseEntity<?> getProductInCategory(String slug) throws IOException {
-            List<ProductDto> productDtos = new ArrayList<>();
-            Categories categories = categoryRepository.findCategoriesBySlug(slug);
-            List<Products> products = productRepository.findProductsByIdCategory(categories.getId());
-            products.stream().forEach(value -> {
-                List<ImageDto> imageDtos = new ArrayList<>();
-                ProductDto productDto = new ProductDto();
-                List<Images> images = imageRepository.findAllByProductId(value.getId());
-                images.stream().forEach(item -> {
-                    ImageDto imageDto = new ImageDto();
-                    imageDto.setId(item.getId());
-                    imageDto.setUrl(item.getUrl());
-                    imageDtos.add(imageDto);
-                });
-                productDto.setId(value.getId());
-                productDto.setName(value.getName());
-                productDto.setPrice(value.getPrice());
-                productDto.setSalePrice(value.getSalePrice());
-                productDto.setDescription(value.getDescription());
-                productDto.setLongDescription(value.getLongDescription());
-                productDto.setSlug(value.getSlug());
-                productDto.setImages(imageDtos);
-                productDtos.add(productDto);
-            });
-            return ResponseEntity.ok(productDtos);
-        }
-
 }
 

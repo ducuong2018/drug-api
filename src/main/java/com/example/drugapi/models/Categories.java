@@ -15,6 +15,7 @@ public class Categories {
     private String name;
     private String image;
     private Integer level;
+    @Column(name="slug")
     private String slug;
     @Column(name = "parent_id")
     private Integer parentId;

@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
     @GetMapping(path = "/category")
-    public List<CategoryDto> getCategories (@RequestParam (required = false) String slug) throws IOException {
+    public ResponseEntity<?> getCategories (@RequestParam (required = false) String slug) throws IOException {
         return categoryService.getCategories(slug);
     }
 }

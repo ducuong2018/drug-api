@@ -16,7 +16,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
     @GetMapping(path = "/products")
-    public ResponseEntity<?> getListProducts (@RequestParam (required = false) String slug, Pageable pageable) throws Exception {
-        return  productService.getProducts(slug,pageable);
+    public ResponseEntity<?> getListProducts (@RequestParam (required = false) String slug ,@RequestParam(required = false) String slugCategory,  Pageable pageable) throws Exception {
+        return  productService.getProducts(slug,slugCategory,pageable);
     }
 }
