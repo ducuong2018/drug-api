@@ -16,5 +16,5 @@ public interface CategoryRepository extends JpaRepository<Categories, Integer> {
     @Query("SELECT b FROM Categories a inner join Categories b on a.id = b.parentId  where a.id = ?1")
     List<Categories> getChillCategoriesById(Integer id);
     @Query("SELECT b FROM Categories a inner join Categories b on a.parentId = b.id  where a.id = ?1")
-    List<Categories> getParentCategoriesById(Integer id);
+    Categories getParentCategoriesById(Integer id);
 }

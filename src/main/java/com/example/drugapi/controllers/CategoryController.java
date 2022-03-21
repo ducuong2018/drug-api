@@ -23,4 +23,8 @@ public class CategoryController {
     public ResponseEntity<?> getCategories (@RequestParam (required = false) String slug) throws IOException {
         return categoryService.getCategories(slug);
     }
+    @GetMapping(path = "category_detail")
+    public ResponseEntity<?> getCategoryDetail (@RequestParam String slug) throws IOException {
+        return categoryService.getCategoryFullLv(slug);
+    }
 }
